@@ -1,0 +1,20 @@
+name: 自动同步原仓库 (Auto Sync Upstream)
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # 每天国际标准时间 0:00 (北京时间早上 8:00) 自动运行一次
+  workflow_dispatch:   # 允许你在 Actions 页面手动点击按钮触发同步
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # 赋予脚本向你的仓库写入代码的权限
+    
+    steps:
+      - name: 运行官方同步命令
+        run: gh repo sync $REPOSITORY -b $BRANCH_NAME
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          BRANCH_NAME: ${{ github.ref_name }}
